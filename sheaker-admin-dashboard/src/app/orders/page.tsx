@@ -30,7 +30,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+
 } from "@/components/ui/dialog";
 import { Search, MoreHorizontal, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -102,15 +102,15 @@ const mockOrders = [
 ];
 
 // Animation variants
-const rowVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-};
+// const rowVariants = {
+//   hidden: { opacity: 0, y: 10 },
+//   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+// };
 
-const modalVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
-};
+// const modalVariants = {
+//   hidden: { opacity: 0, scale: 0.95 },
+//   visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+// };
 
 export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("");

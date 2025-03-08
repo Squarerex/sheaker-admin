@@ -33,10 +33,6 @@ import {
   Lock,
   Mail,
   Smartphone,
-  Globe,
-  AlertTriangle,
-  Clock,
-  CheckCircle,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -388,7 +384,7 @@ export default function SettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Methods</CardTitle>
-                  <CardDescription>Configure your store's payment options</CardDescription>
+                  <CardDescription>Configure your store&apos;s payment options</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {[

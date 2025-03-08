@@ -11,7 +11,7 @@ interface AdminHeaderProps {
   className: string;
 }
 
-const Header: React.FC<AdminHeaderProps> = ({ setIsSidebarOpen, className }) => {
+const Header: React.FC<AdminHeaderProps> = ({  className }) => {
   const pathname = usePathname();
   const isAuthPage = pathname.startsWith('/auth');
 
@@ -20,7 +20,7 @@ const Header: React.FC<AdminHeaderProps> = ({ setIsSidebarOpen, className }) => 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  // const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const toggleUserMenu = () => setShowUserMenu((prev) => !prev);
   const toggleSearch = () => {
     setSearchActive((prev) => !prev);

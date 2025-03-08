@@ -1,8 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { 
-  FaTachometerAlt, 
-  FaBox, 
+  FaTachometerAlt,  
   FaShoppingBag, 
   FaUsers, 
   FaCog, 

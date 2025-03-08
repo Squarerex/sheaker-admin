@@ -22,22 +22,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { 
   AreaChart, 
-  BarChart, 
-  Box, 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Wallet, 
-  Settings, 
-  LogOut,
-  Bell,
-  Search
+  BarChart
 } from "lucide-react";
 
 // Custom theme colors 
