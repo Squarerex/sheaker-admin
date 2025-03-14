@@ -6,8 +6,11 @@ import {
   FaUsers, 
   FaCog, 
   FaTags,
+  FaBox,
   FaSignOutAlt, 
-  FaChevronLeft 
+  FaChevronLeft,
+  FaClipboardList,
+  FaChartBar,
 } from "react-icons/fa";
 import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import Link from "next/link";
@@ -17,12 +20,15 @@ import { usePathname } from "next/navigation";
 // Sidebar menu items
 const menuItems = [
   { id: "dashboard", label: "Dashboard", icon: FaTachometerAlt, href: "/" },
-  // { id: "products", label: "Products", icon: FaBox, href: "/products" },
+  { id: "products", label: "Products", icon: FaBox, href: "/products-and-inventory" },
   { id: "orders", label: "Orders", icon: FaShoppingBag, href: "/orders" },
   { id: "users", label: "Users", icon: FaUsers, href: "/users" },
-{ id: "settings", label: "Settings", icon: FaCog, href: "/account/settings" },
-{ id: "discountsAndPromotions", label: "Discount/Promotions", icon: FaTags, href: "/discounts-and-promotions" },
+  { id: "settings", label: "Settings", icon: FaCog, href: "/account/settings" },
+  { id: "discountsAndPromotions", label: "Discount/Promotions", icon: FaTags, href: "/discounts-and-promotions" },
+  { id: "analytics", label: "Analytics & Reporting", icon: FaChartBar, href: "/analytics-and-reporting" },
+  { id: "activityLogs", label: "Activity Logs", icon: FaClipboardList, href: "/activity-logs" },
 ];
+
 
 // Animation variants
 const sidebarVariants = {

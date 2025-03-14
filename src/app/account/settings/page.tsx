@@ -127,13 +127,6 @@ export default function SettingsPage() {
               Account
             </TabsTrigger>
             <TabsTrigger
-              value="store"
-              className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
-            >
-              <Building className="w-4 h-4" />
-              Store
-            </TabsTrigger>
-            <TabsTrigger
               value="shipping"
               className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
             >
@@ -141,25 +134,11 @@ export default function SettingsPage() {
               Shipping
             </TabsTrigger>
             <TabsTrigger
-              value="payment"
-              className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
-            >
-              <CreditCard className="w-4 h-4" />
-              Payment
-            </TabsTrigger>
-            <TabsTrigger
               value="security"
               className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
             >
               <Shield className="w-4 h-4" />
               Security
-            </TabsTrigger>
-            <TabsTrigger
-              value="notifications"
-              className="flex items-center gap-2 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700"
-            >
-              <Bell className="w-4 h-4" />
-              Notifications
             </TabsTrigger>
           </TabsList>
 
@@ -270,74 +249,6 @@ export default function SettingsPage() {
             </motion.div>
           </TabsContent>
 
-          {/* Store Settings */}
-          <TabsContent value="store" asChild>
-            <motion.div variants={tabContentVariants} initial="hidden" animate="visible">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Store Information</CardTitle>
-                  <CardDescription>Manage your store details and branding</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center border">
-                      <div className="w-10 h-10 rounded-md" style={{ backgroundColor: colors.primary }}></div>
-                    </div>
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" />
-                      Upload Logo
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Store Name</label>
-                      <Input defaultValue="DropShip" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Support Email</label>
-                      <Input defaultValue="support@dropship.com" />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-medium">Store URL</label>
-                      <div className="flex">
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          https://
-                        </span>
-                        <Input defaultValue="dropship.com" className="rounded-l-none" />
-                      </div>
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <label className="text-sm font-medium">Store Description</label>
-                      <Textarea
-                        rows={4}
-                        defaultValue="DropShip is a premier dropshipping platform offering a wide range of products."
-                      />
-                    </div>
-                  </div>
-                  <Separator className="my-4" />
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Brand Colors</label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {Object.entries(colors).map(([key, value]) => (
-                        <div key={key} className="space-y-1">
-                          <div className="w-full h-10 rounded-md" style={{ backgroundColor: value }}></div>
-                          <Input defaultValue={value} />
-                          <p className="text-xs text-gray-500 capitalize">{key}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-end gap-2">
-                  <Button variant="outline">Cancel</Button>
-                  <Button style={{ backgroundColor: colors.primary }}  disabled={isLoading}>
-                    {isLoading ? "Saving..." : "Save Changes"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          </TabsContent>
-
           {/* Shipping Settings */}
           <TabsContent value="shipping" asChild>
             <motion.div variants={tabContentVariants} initial="hidden" animate="visible">
@@ -379,7 +290,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Payment Settings */}
-          <TabsContent value="payment" asChild>
+          {/* <TabsContent value="payment" asChild>
             <motion.div variants={tabContentVariants} initial="hidden" animate="visible">
               <Card>
                 <CardHeader>
@@ -415,7 +326,7 @@ export default function SettingsPage() {
                 </CardFooter>
               </Card>
             </motion.div>
-          </TabsContent>
+          </TabsContent> */}
 
           {/* Security Settings */}
           <TabsContent value="security" asChild>
@@ -443,22 +354,6 @@ export default function SettingsPage() {
                       </div>
                       <Switch id="email-2fa" className="ml-auto" />
                     </div>
-                    <div className="flex items-center gap-4">
-                      <Smartphone className="h-5 w-5 text-gray-500" />
-                      <div>
-                        <h3 className="font-medium">SMS Authentication</h3>
-                        <p className="text-sm text-gray-500">Receive a code via SMS</p>
-                      </div>
-                      <Switch id="sms-2fa" className="ml-auto" />
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Lock className="h-5 w-5 text-gray-500" />
-                      <div>
-                        <h3 className="font-medium">Authenticator App</h3>
-                        <p className="text-sm text-gray-500">Use Google Authenticator or similar</p>
-                      </div>
-                      <Switch id="app-2fa" className="ml-auto" />
-                    </div>
                   </div>
                   <Separator />
                   <div className="flex items-center justify-between py-2">
@@ -485,7 +380,7 @@ export default function SettingsPage() {
           </TabsContent>
 
           {/* Notifications Settings */}
-          <TabsContent value="notifications" asChild>
+          {/* <TabsContent value="notifications" asChild>
             <motion.div variants={tabContentVariants} initial="hidden" animate="visible">
               <Card>
                 <CardHeader>
@@ -542,7 +437,7 @@ export default function SettingsPage() {
                 </CardFooter>
               </Card>
             </motion.div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </motion.div>
     </div>

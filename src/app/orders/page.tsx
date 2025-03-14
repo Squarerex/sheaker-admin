@@ -30,10 +30,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-
 } from "@/components/ui/dialog";
-import { Search, MoreHorizontal, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, MoreHorizontal, Eye, ChevronLeft, ChevronRight, Check, X, RefreshCw, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FaChevronDown } from "react-icons/fa";
 
 // Brand colors
 const colors = {
@@ -50,33 +50,33 @@ const mockOrders = [
     customer: "John Doe",
     date: "2025-03-01",
     total: 149.99,
-    status: "Pending",
+    status: "Processing",
     items: [
       { name: "Sneakers X1", quantity: 2, price: 59.99 },
       { name: "T-Shirt Pro", quantity: 1, price: 30.00 },
     ],
-    shipping: { address: "123 Main St, NY", method: "Standard" },
+    shipping: { address: "123 Main St, NY", method: "Standard", trackingId: "TRK123456789" },
   },
   {
     id: "ORD002",
     customer: "Jane Smith",
     date: "2025-03-02",
     total: 299.50,
-    status: "Processing",
+    status: "Completed",
     items: [
       { name: "Jacket Elite", quantity: 1, price: 199.50 },
       { name: "Cap Classic", quantity: 2, price: 50.00 },
     ],
-    shipping: { address: "456 Oak Ave, CA", method: "Express" },
+    shipping: { address: "456 Oak Ave, CA", method: "Express", trackingId: "TRK987654321" },
   },
   {
     id: "ORD003",
     customer: "Mike Johnson",
     date: "2025-03-03",
     total: 89.99,
-    status: "Shipped",
+    status: "Refunded",
     items: [{ name: "Sneakers X2", quantity: 1, price: 89.99 }],
-    shipping: { address: "789 Pine Rd, TX", method: "Standard" },
+    shipping: { address: "789 Pine Rd, TX", method: "Standard", trackingId: "TRK456789123" },
   },
   {
     id: "ORD004",
@@ -85,32 +85,9 @@ const mockOrders = [
     total: 0.00,
     status: "Cancelled",
     items: [{ name: "Hoodie Basic", quantity: 1, price: 45.00 }],
-    shipping: { address: "321 Elm St, FL", method: "Standard" },
-  },
-  {
-    id: "ORD005",
-    customer: "Alex Carter",
-    date: "2025-03-05",
-    total: 199.99,
-    status: "Delivered",
-    items: [
-      { name: "Sneakers X3", quantity: 1, price: 99.99 },
-      { name: "Jeans Slim", quantity: 1, price: 100.00 },
-    ],
-    shipping: { address: "654 Birch Ln, WA", method: "Next Day" },
+    shipping: { address: "321 Elm St, FL", method: "Standard", trackingId: "TRK321654987" },
   },
 ];
-
-// Animation variants
-// const rowVariants = {
-//   hidden: { opacity: 0, y: 10 },
-//   visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-// };
-
-// const modalVariants = {
-//   hidden: { opacity: 0, scale: 0.95 },
-//   visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
-// };
 
 export default function OrdersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -118,6 +95,7 @@ export default function OrdersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [selectedOrder, setSelectedOrder] = useState<typeof mockOrders[0] | null>(null);
+  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
   // Filter and search logic
   const filteredOrders = useMemo(() => {
@@ -137,8 +115,38 @@ export default function OrdersPage() {
     currentPage * rowsPerPage
   );
 
-  const handleViewDetails = (order: typeof mockOrders[0]) => {
-    setSelectedOrder(order);
+  // Handle order selection for bulk actions
+  const handleOrderSelection = (orderId: string) => {
+    setSelectedOrders((prev) =>
+      prev.includes(orderId) ? prev.filter((id) => id !== orderId) : [...prev, orderId]
+    );
+  };
+
+  // Bulk update order status
+  const handleBulkStatusUpdate = (status: string) => {
+    console.log(`Updating orders ${selectedOrders.join(", ")} to ${status}`);
+    setSelectedOrders([]); // Clear selection after update
+  };
+
+  // Handle order status update
+  const handleUpdateStatus = (orderId: string, status: string) => {
+    console.log(`Updating order ${orderId} to ${status}`);
+  };
+
+  // Handle refund issuance
+  const handleIssueRefund = (orderId: string) => {
+    console.log(`Issuing refund for order ${orderId}`);
+  };
+
+  // Handle return approval
+  const handleApproveReturn = (orderId: string) => {
+    console.log(`Approving return for order ${orderId}`);
+  };
+
+  // Mock shipping tracking API
+  const trackShipment = (trackingId: string) => {
+    console.log(`Tracking shipment with ID: ${trackingId}`);
+    // Integrate with a third-party API like FedEx, UPS, or DHL here
   };
 
   return (
@@ -171,20 +179,60 @@ export default function OrdersPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="All Statuses">All Statuses</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
               <SelectItem value="Processing">Processing</SelectItem>
-              <SelectItem value="Shipped">Shipped</SelectItem>
-              <SelectItem value="Delivered">Delivered</SelectItem>
+              <SelectItem value="Completed">Completed</SelectItem>
+              <SelectItem value="Refunded">Refunded</SelectItem>
               <SelectItem value="Cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
+
+        {/* Bulk Actions */}
+        {selectedOrders.length > 0 && (
+          <div className="mb-4 flex items-center gap-4">
+            <p className="text-sm text-gray-500">
+              {selectedOrders.length} orders selected
+            </p>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  Bulk Actions <FaChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate("Processing")}>
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Mark as Processing
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate("Completed")}>
+                  <Check className="mr-2 h-4 w-4" />
+                  Mark as Completed
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleBulkStatusUpdate("Cancelled")}>
+                  <X className="mr-2 h-4 w-4" />
+                  Mark as Cancelled
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
 
         {/* Orders Table */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>
+                  <input
+                    type="checkbox"
+                    checked={selectedOrders.length === paginatedOrders.length}
+                    onChange={(e) =>
+                      setSelectedOrders(
+                        e.target.checked ? paginatedOrders.map((order) => order.id) : []
+                      )
+                    }
+                  />
+                </TableHead>
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
                 <TableHead>Date</TableHead>
@@ -196,10 +244,14 @@ export default function OrdersPage() {
             <TableBody>
               {paginatedOrders.length > 0 ? (
                 paginatedOrders.map((order) => (
-                  <TableRow
-                    key={order.id}
-                    className="hover:bg-gray-50"
-                  >
+                  <TableRow key={order.id} className="hover:bg-gray-50">
+                    <TableCell>
+                      <input
+                        type="checkbox"
+                        checked={selectedOrders.includes(order.id)}
+                        onChange={() => handleOrderSelection(order.id)}
+                      />
+                    </TableCell>
                     <TableCell>{order.id}</TableCell>
                     <TableCell className="font-medium">{order.customer}</TableCell>
                     <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
@@ -209,11 +261,10 @@ export default function OrdersPage() {
                         className={cn(
                           "px-2 py-1 rounded-full text-xs font-medium",
                           {
-                            "bg-yellow-100 text-yellow-800": order.status === "Pending",
                             "bg-blue-100 text-blue-800": order.status === "Processing",
-                            "bg-green-100 text-green-800": order.status === "Shipped",
-                            "bg-purple-100 text-purple-800": order.status === "Delivered",
+                            "bg-green-100 text-green-800": order.status === "Completed",
                             "bg-red-100 text-red-800": order.status === "Cancelled",
+                            "bg-purple-100 text-purple-800": order.status === "Refunded",
                           }
                         )}
                       >
@@ -228,9 +279,25 @@ export default function OrdersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleViewDetails(order)}>
+                          <DropdownMenuItem onClick={() => setSelectedOrder(order)}>
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(order.id, "Completed")}>
+                            <Check className="mr-2 h-4 w-4" />
+                            Mark as Completed
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(order.id, "Cancelled")}>
+                            <X className="mr-2 h-4 w-4" />
+                            Cancel Order
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleIssueRefund(order.id)}>
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Issue Refund
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleApproveReturn(order.id)}>
+                            <Truck className="mr-2 h-4 w-4" />
+                            Approve Return
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -239,7 +306,7 @@ export default function OrdersPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-4">
+                  <TableCell colSpan={7} className="text-center py-4">
                     No orders found
                   </TableCell>
                 </TableRow>
@@ -305,11 +372,10 @@ export default function OrdersPage() {
                         className={cn(
                           "px-2 py-1 rounded-full text-xs font-medium",
                           {
-                            "bg-yellow-100 text-yellow-800": selectedOrder.status === "Pending",
                             "bg-blue-100 text-blue-800": selectedOrder.status === "Processing",
-                            "bg-green-100 text-green-800": selectedOrder.status === "Shipped",
-                            "bg-purple-100 text-purple-800": selectedOrder.status === "Delivered",
+                            "bg-green-100 text-green-800": selectedOrder.status === "Completed",
                             "bg-red-100 text-red-800": selectedOrder.status === "Cancelled",
+                            "bg-purple-100 text-purple-800": selectedOrder.status === "Refunded",
                           }
                         )}
                       >
@@ -344,13 +410,25 @@ export default function OrdersPage() {
                     <h3 className="font-semibold mb-2">Shipping Details</h3>
                     <p><strong>Address:</strong> {selectedOrder.shipping.address}</p>
                     <p><strong>Method:</strong> {selectedOrder.shipping.method}</p>
+                    <p><strong>Tracking ID:</strong> {selectedOrder.shipping.trackingId}</p>
+                    <Button
+                      variant="outline"
+                      className="mt-2"
+                      onClick={() => trackShipment(selectedOrder.shipping.trackingId)}
+                    >
+                      <Truck className="mr-2 h-4 w-4" />
+                      Track Shipment
+                    </Button>
                   </div>
 
                   <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={() => setSelectedOrder(null)}>
                       Close
                     </Button>
-                    <Button style={{ backgroundColor: colors.primary }}>
+                    <Button
+                      style={{ backgroundColor: colors.primary }}
+                      onClick={() => handleUpdateStatus(selectedOrder.id, "Completed")}
+                    >
                       Update Status
                     </Button>
                   </div>

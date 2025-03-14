@@ -39,7 +39,21 @@ const colors = {
 };
 
 // Mock coupon data (replace with API call)
-const mockCoupons = [
+const mockCoupons: {
+  id: number;
+  code: string;
+  discount: number;
+  type: "Percentage" | "Fixed";
+  usage: number;
+  totalValue: number;
+  status: string;
+  expiry: string;
+  autoDiscount: boolean;
+  campaign: string | null;
+  flashSale: boolean;
+  bogo: boolean;
+  bundle: boolean;
+}[] = [
   {
     id: 1,
     code: "SAVE10",
@@ -49,6 +63,11 @@ const mockCoupons = [
     totalValue: 500.0,
     status: "Active",
     expiry: "2025-12-31",
+    autoDiscount: false,
+    campaign: null,
+    flashSale: false,
+    bogo: false,
+    bundle: false,
   },
   {
     id: 2,
@@ -59,6 +78,11 @@ const mockCoupons = [
     totalValue: 300.0,
     status: "Active",
     expiry: "2025-06-30",
+    autoDiscount: true,
+    campaign: "Summer Sale",
+    flashSale: false,
+    bogo: false,
+    bundle: false,
   },
   {
     id: 3,
@@ -69,26 +93,11 @@ const mockCoupons = [
     totalValue: 750.0,
     status: "Inactive",
     expiry: "2025-03-01",
-  },
-  {
-    id: 4,
-    code: "FREESHIP",
-    discount: 5,
-    type: "Fixed",
-    usage: 100,
-    totalValue: 500.0,
-    status: "Active",
-    expiry: "2025-09-15",
-  },
-  {
-    id: 5,
-    code: "SUMMER25",
-    discount: 25,
-    type: "Percentage",
-    usage: 30,
-    totalValue: 900.0,
-    status: "Inactive",
-    expiry: "2025-08-31",
+    autoDiscount: false,
+    campaign: null,
+    flashSale: false,
+    bogo: false,
+    bundle: false,
   },
 ];
 
@@ -108,12 +117,19 @@ export default function DiscountsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(5);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingCoupon, setEditingCoupon] = useState<typeof mockCoupons[0] | null>(null);
   const [newCoupon, setNewCoupon] = useState({
     code: "",
     discount: "",
     type: "Percentage" as "Percentage" | "Fixed",
     expiry: "",
     status: true,
+    autoDiscount: false,
+    campaign: null as string | null,
+    flashSale: false,
+    bogo: false,
+    bundle: false,
   });
 
   // Filter logic
@@ -145,6 +161,11 @@ export default function DiscountsPage() {
       totalValue: 0,
       status: newCoupon.status ? "Active" : "Inactive",
       expiry: newCoupon.expiry,
+      autoDiscount: newCoupon.autoDiscount,
+      campaign: newCoupon.campaign,
+      flashSale: newCoupon.flashSale,
+      bogo: newCoupon.bogo,
+      bundle: newCoupon.bundle,
     };
     console.log("Creating coupon:", coupon);
     // Add API call here to save coupon
@@ -156,15 +177,33 @@ export default function DiscountsPage() {
       type: "Percentage",
       expiry: "",
       status: true,
+      autoDiscount: false,
+      campaign: null,
+      flashSale: false,
+      bogo: false,
+      bundle: false,
     });
   };
 
-  const handleEdit = (coupon: (typeof mockCoupons)[0]) => {
-    console.log(`Editing coupon: ${coupon.id}`);
-    // Implement edit functionality (e.g., open a modal with pre-filled data)
+  const handleEdit = (coupon: typeof mockCoupons[0]) => {
+    setEditingCoupon(coupon);
+    setIsEditModalOpen(true);
   };
 
-  const handleDelete = (coupon: (typeof mockCoupons)[0]) => {
+  const handleUpdateCoupon = () => {
+    if (editingCoupon) {
+      console.log("Updating coupon:", editingCoupon);
+      // Add API call here to update coupon
+      const index = mockCoupons.findIndex((c) => c.id === editingCoupon.id);
+      if (index !== -1) {
+        mockCoupons[index] = editingCoupon; // Mock update
+      }
+      setIsEditModalOpen(false);
+      setEditingCoupon(null);
+    }
+  };
+
+  const handleDelete = (coupon: typeof mockCoupons[0]) => {
     if (confirm(`Are you sure you want to delete ${coupon.code}?`)) {
       console.log(`Deleting coupon: ${coupon.id}`);
       // Implement delete API call
@@ -265,6 +304,52 @@ export default function DiscountsPage() {
                     />
                     <label className="text-sm font-medium">Active</label>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newCoupon.autoDiscount}
+                      onCheckedChange={(checked) =>
+                        setNewCoupon({ ...newCoupon, autoDiscount: checked })
+                      }
+                    />
+                    <label className="text-sm font-medium">Auto-Discount</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newCoupon.flashSale}
+                      onCheckedChange={(checked) =>
+                        setNewCoupon({ ...newCoupon, flashSale: checked })
+                      }
+                    />
+                    <label className="text-sm font-medium">Flash Sale</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newCoupon.bogo}
+                      onCheckedChange={(checked) =>
+                        setNewCoupon({ ...newCoupon, bogo: checked })
+                      }
+                    />
+                    <label className="text-sm font-medium">BOGO</label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newCoupon.bundle}
+                      onCheckedChange={(checked) =>
+                        setNewCoupon({ ...newCoupon, bundle: checked })
+                      }
+                    />
+                    <label className="text-sm font-medium">Bundle Deal</label>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Campaign Name</label>
+                    <Input
+                      value={newCoupon.campaign || ""}
+                      onChange={(e) =>
+                        setNewCoupon({ ...newCoupon, campaign: e.target.value })
+                      }
+                      placeholder="e.g., Summer Sale"
+                    />
+                  </div>
                   <div className="flex justify-end gap-2">
                     <Button
                       variant="outline"
@@ -314,6 +399,11 @@ export default function DiscountsPage() {
                 <TableHead>Total Value</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Expiry</TableHead>
+                <TableHead>Auto-Discount</TableHead>
+                <TableHead>Campaign</TableHead>
+                <TableHead>Flash Sale</TableHead>
+                <TableHead>BOGO</TableHead>
+                <TableHead>Bundle</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -350,6 +440,11 @@ export default function DiscountsPage() {
                     <TableCell>
                       {new Date(coupon.expiry).toLocaleDateString()}
                     </TableCell>
+                    <TableCell>{coupon.autoDiscount ? "Yes" : "No"}</TableCell>
+                    <TableCell>{coupon.campaign || "-"}</TableCell>
+                    <TableCell>{coupon.flashSale ? "Yes" : "No"}</TableCell>
+                    <TableCell>{coupon.bogo ? "Yes" : "No"}</TableCell>
+                    <TableCell>{coupon.bundle ? "Yes" : "No"}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -371,7 +466,7 @@ export default function DiscountsPage() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-4">
+                  <TableCell colSpan={12} className="text-center py-4">
                     No coupons found
                   </TableCell>
                 </TableRow>
@@ -410,6 +505,152 @@ export default function DiscountsPage() {
           </div>
         </div>
       </motion.div>
+
+      {/* Edit Coupon Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <motion.div
+            variants={modalVariants}
+            initial="hidden"
+            animate="visible"
+            className="sm:max-w-[500px]"
+          >
+            <DialogHeader>
+              <DialogTitle>Edit Coupon</DialogTitle>
+            </DialogHeader>
+            {editingCoupon && (
+              <div className="space-y-4 p-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Coupon Code</label>
+                  <Input
+                    value={editingCoupon.code}
+                    onChange={(e) =>
+                      setEditingCoupon({ ...editingCoupon, code: e.target.value })
+                    }
+                    placeholder="e.g., SAVE10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Discount Amount</label>
+                  <Input
+                    type="number"
+                    value={editingCoupon.discount}
+                    onChange={(e) =>
+                      setEditingCoupon({
+                        ...editingCoupon,
+                        discount: parseFloat(e.target.value),
+                      })
+                    }
+                    placeholder="e.g., 10"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Discount Type</label>
+                  <Select
+                    value={editingCoupon.type}
+                    onValueChange={(value) =>
+                      setEditingCoupon({
+                        ...editingCoupon,
+                        type: value as "Percentage" | "Fixed",
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Percentage">Percentage (%)</SelectItem>
+                      <SelectItem value="Fixed">Fixed Amount ($)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Expiry Date</label>
+                  <Input
+                    type="date"
+                    value={editingCoupon.expiry}
+                    onChange={(e) =>
+                      setEditingCoupon({ ...editingCoupon, expiry: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingCoupon.status === "Active"}
+                    onCheckedChange={(checked) =>
+                      setEditingCoupon({
+                        ...editingCoupon,
+                        status: checked ? "Active" : "Inactive",
+                      })
+                    }
+                  />
+                  <label className="text-sm font-medium">Active</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingCoupon.autoDiscount}
+                    onCheckedChange={(checked) =>
+                      setEditingCoupon({ ...editingCoupon, autoDiscount: checked })
+                    }
+                  />
+                  <label className="text-sm font-medium">Auto-Discount</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingCoupon.flashSale}
+                    onCheckedChange={(checked) =>
+                      setEditingCoupon({ ...editingCoupon, flashSale: checked })
+                    }
+                  />
+                  <label className="text-sm font-medium">Flash Sale</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingCoupon.bogo}
+                    onCheckedChange={(checked) =>
+                      setEditingCoupon({ ...editingCoupon, bogo: checked })
+                    }
+                  />
+                  <label className="text-sm font-medium">BOGO</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingCoupon.bundle}
+                    onCheckedChange={(checked) =>
+                      setEditingCoupon({ ...editingCoupon, bundle: checked })
+                    }
+                  />
+                  <label className="text-sm font-medium">Bundle Deal</label>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Campaign Name</label>
+                  <Input
+                    value={editingCoupon.campaign || ""}
+                    onChange={(e) =>
+                      setEditingCoupon({ ...editingCoupon, campaign: e.target.value })
+                    }
+                    placeholder="e.g., Summer Sale"
+                  />
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsEditModalOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    style={{ backgroundColor: colors.primary }}
+                    onClick={handleUpdateCoupon}
+                  >
+                    Save Changes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
